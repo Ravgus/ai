@@ -2,15 +2,14 @@
 
 # Importing the libraries
 import numpy as np
-from random import random, randint
 import matplotlib.pyplot as plt
-import time
+import timeit as t
 
 # Importing the Kivy packages
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-from kivy.graphics import Color, Ellipse, Line
+from kivy.graphics import Color, Line
 from kivy.config import Config
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
 from kivy.vector import Vector
@@ -29,7 +28,7 @@ n_points = 0
 length = 0
 
 # Getting our AI, which we call "brain", and that contains our neural network that represents our Q-function
-brain = Dqn(5,3,0.9)
+brain = Dqn(6,3,0.9)
 action2rotation = [0,20,-20]
 last_reward = 0
 scores = []
@@ -103,6 +102,8 @@ class Game(Widget):
     ball1 = ObjectProperty(None)
     ball2 = ObjectProperty(None)
     ball3 = ObjectProperty(None)
+    durationTime = 0
+    startTime = t.default_timer()
 
     def serve_car(self):
         self.car.center = self.center
@@ -127,7 +128,8 @@ class Game(Widget):
         xx = goal_x - self.car.x
         yy = goal_y - self.car.y
         orientation = Vector(*self.car.velocity).angle((xx,yy))/180.
-        last_signal = [self.car.signal1, self.car.signal2, self.car.signal3, orientation, -orientation]
+        self.durationTime = t.default_timer() - self.startTime
+        last_signal = [self.car.signal1, self.car.signal2, self.car.signal3, orientation, -orientation, self.durationTime]
         action = brain.update(last_reward, last_signal)
         scores.append(brain.score())
         rotation = action2rotation[action]
@@ -142,7 +144,7 @@ class Game(Widget):
             last_reward = -1
         else: # otherwise
             self.car.velocity = Vector(6, 0).rotate(self.car.angle)
-            last_reward = -0.2
+            last_reward = -0.1
             if distance < last_distance:
                 last_reward = 0.1
 
@@ -158,10 +160,21 @@ class Game(Widget):
         if self.car.y > self.height - 10:
             self.car.y = self.height - 10
             last_reward = -1
+            
+        if self.durationTime > 10 and self.durationTime < 20:
+            last_reward = -0.3
+        elif self.durationTime > 10 and self.durationTime < 30:
+            last_reward = -0.5
+        elif self.durationTime > 30:
+            last_reward = -1
 
         if distance < 100:
             goal_x = self.width-goal_x
             goal_y = self.height-goal_y
+            
+            self.startTime = t.default_timer()
+            
+            last_reward = 2
         last_distance = distance
 
 # Adding the painting tools
@@ -172,7 +185,6 @@ class MyPaintWidget(Widget):
         global length, n_points, last_x, last_y
         with self.canvas:
             Color(0.8,0.7,0)
-            d = 10.
             touch.ud['line'] = Line(points = (touch.x, touch.y), width = 10)
             last_x = int(touch.x)
             last_y = int(touch.y)

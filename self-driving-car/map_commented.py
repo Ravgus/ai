@@ -2,15 +2,13 @@
 
 # Importing the libraries
 import numpy as np
-from random import random, randint
 import matplotlib.pyplot as plt
-import time
 
 # Importing the Kivy packages
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-from kivy.graphics import Color, Ellipse, Line
+from kivy.graphics import Color, Line
 from kivy.config import Config
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
 from kivy.vector import Vector
@@ -173,7 +171,6 @@ class MyPaintWidget(Widget):
         global length,n_points,last_x,last_y
         with self.canvas:
             Color(0.8,0.7,0)
-            d=10.
             touch.ud['line'] = Line(points = (touch.x, touch.y), width = 10)
             last_x = int(touch.x)
             last_y = int(touch.y)

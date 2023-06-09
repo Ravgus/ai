@@ -2,14 +2,12 @@
 
 # Importing the libraries
 
-import numpy as np
 import random
 import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import torch.autograd as autograd
 from torch.autograd import Variable
 
 # Creating the architecture of the Neural Network
@@ -21,11 +19,13 @@ class Network(nn.Module):
         self.input_size = input_size
         self.nb_action = nb_action
         self.fc1 = nn.Linear(input_size, 30)
-        self.fc2 = nn.Linear(30, nb_action)
+        self.fc2 = nn.Linear(30, 30)
+        self.fc3 = nn.Linear(30, nb_action)
     
     def forward(self, state):
-        x = F.relu(self.fc1(state))
-        q_values = self.fc2(x)
+        l1 = F.relu(self.fc1(state))
+        l2 = F.relu(self.fc2(l1))
+        q_values = self.fc3(l2)
         return q_values
 
 # Implementing Experience Replay
@@ -60,7 +60,8 @@ class Dqn():
         self.last_reward = 0
     
     def select_action(self, state):
-        probs = F.softmax(self.model(Variable(state, volatile = True))*100) # T=100; 0 - ai is off
+        # T - temperature
+        probs = F.softmax(self.model(Variable(state, volatile = True))*75) # T=75; if T=0 - ai is off
         #action = probs.multinomial()
         #return action.data[0,0]
         m = torch.distributions.Categorical(probs)
