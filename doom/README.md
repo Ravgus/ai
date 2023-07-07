@@ -24,4 +24,4 @@ python ai.py
 
 OR go to:
 
-https://colab.research.google.com/drive/1dIk4Gtudl8VrdkRDTM9Y7aCs4VGsvzNw?usp=sharing#scrollTo=AkVnx4F0s3dD
+https://colab.research.google.com/drive/1Eg7a0fzMOWUI_FO72tkXsnnPi8IIpQWo?usp=sharing
