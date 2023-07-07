@@ -12,8 +12,8 @@ from torch.autograd import Variable
 
 # Importing the packages for OpenAI and Doom
 import gym
-from gym.wrappers import SkipWrapper
-from ppaquette_gym_doom.wrappers.action_space import ToDiscrete
+import vizdoomgym
+from gym import wrappers
 
 # Importing the other Python files
 import experience_replay, image_preprocessing
@@ -31,7 +31,7 @@ class CNN(nn.Module):
         self.convolution1 = nn.Conv2d(in_channels = 1, out_channels = 32, kernel_size = 5)
         self.convolution2 = nn.Conv2d(in_channels = 32, out_channels = 32, kernel_size = 3)
         self.convolution3 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 2)
-        self.fc1 = nn.Linear(in_features = self.count_neurons((1, 80, 80)), out_features = 40)
+        self.fc1 = nn.Linear(in_features = self.count_neurons((1, 256, 256)), out_features = 40)
         self.fc2 = nn.Linear(in_features = 40, out_features = number_actions)
 
     def count_neurons(self, image_dim):
@@ -82,7 +82,7 @@ class AI:
 # Part 2 - Training the AI with Deep Convolutional Q-Learning
 
 # Getting the Doom environment
-doom_env = image_preprocessing.PreprocessImage(SkipWrapper(4)(ToDiscrete("minimal")(gym.make("ppaquette/DoomCorridor-v0"))), width = 80, height = 80, grayscale = True)
+doom_env = image_preprocessing.PreprocessImage(gym.make('VizdoomCorridor-v0'), width = 256, height = 256, grayscale = True)
 doom_env = gym.wrappers.Monitor(doom_env, "videos", force = True)
 number_actions = doom_env.action_space.n
 

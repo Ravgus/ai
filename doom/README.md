@@ -20,3 +20,8 @@ cd Downloads
 cd P20-Doom
 cd Doom
 python ai.py
+
+
+OR go to:
+
+https://colab.research.google.com/drive/1dIk4Gtudl8VrdkRDTM9Y7aCs4VGsvzNw?usp=sharing#scrollTo=AkVnx4F0s3dD
